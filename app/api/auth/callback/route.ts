@@ -1,6 +1,8 @@
 import { getTokens, getUserInfo } from "@/lib/oauth";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
