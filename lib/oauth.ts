@@ -15,7 +15,15 @@ export function getGoogleAuthURL(): string {
   return `${GOOGLE_AUTH_ENDPOINT}?${params.toString()}`;
 }
 
-export async function getTokens(code: string) {
+interface TokenResponse {
+  access_token: string;
+  expires_in?: number;
+  scope?: string;
+  token_type?: string;
+  id_token?: string;
+}
+
+export async function getTokens(code: string): Promise<TokenResponse> {
   const res = await fetch(GOOGLE_TOKEN_ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -29,14 +37,20 @@ export async function getTokens(code: string) {
   });
 
   if (!res.ok) throw new Error("Failed to get access token");
-  return res.json();
+  return res.json() as Promise<TokenResponse>;
 }
 
-export async function getUserInfo(access_token: string) {
+interface GoogleUser {
+  name: string;
+  email: string;
+  picture: string;
+}
+
+export async function getUserInfo(access_token: string): Promise<GoogleUser> {
   const res = await fetch(GOOGLE_USERINFO_ENDPOINT, {
     headers: { Authorization: `Bearer ${access_token}` }
   });
 
   if (!res.ok) throw new Error("Failed to get user info");
-  return res.json();
+  return res.json() as Promise<GoogleUser>;
 }
